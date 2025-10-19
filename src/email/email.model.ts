@@ -6,6 +6,13 @@ export interface Email {
   status: EmailStatus;
 }
 
+export interface EmailSend {
+  subject: string;
+  message: string;
+  reciever: string;
+  status: EmailStatus;
+}
+
 export enum EmailStatus {
   SENT = 'SENT',
   IN_PROGRESS = 'IN_PROGRESS',

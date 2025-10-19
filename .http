@@ -1,0 +1,51 @@
+### Variables
+
+@baseUrl = localhost:3000/dev
+
+@contentType = application/json
+
+
+
+# basic request
+http://{{baseUrl}}
+
+
+### Get all Tasks
+GET http://{{baseUrl}}/api/emails
+
+
+### Get one Task
+GET http://{{baseUrl}}/api/tasks/{{taskId}}
+
+
+### Create a new task
+# @name createEmail
+POST http://{{baseUrl}}/api/emails
+Content-Type: {{contentType}}
+
+{
+    "subject": "Learn the Nest from post man 3",
+    "reciever": "Lanzruizdesigns@gmail.com",
+    "message": "Complete the NestJS course",
+    "status": "SENT"
+}
+
+### Set the task id
+@emailId = {{createEmail.response.body.id}}
+
+### update a task
+
+PATCH http://{{baseUrl}}/api/email/{{emailId}}
+Content-Type: {{contentType}}
+
+{
+    "status": "DONE"
+}
+
+ 
+### Delete a task
+
+Delete http://{{baseUrl}}/api/email/{{emailId}}
+ 
+ 
+ 
