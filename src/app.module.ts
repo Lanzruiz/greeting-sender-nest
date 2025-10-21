@@ -4,9 +4,18 @@ import { AppService } from './app.service';
 import { EmailModule } from './email/email.module';
 import { UserModule } from './user/user.module';
 import { TasksModule } from './tasks/tasks.module';
+import { ConfigModule } from '@nestjs/config';
+import { appConfig } from './config/app.config';
 
 @Module({
-  imports: [EmailModule, UserModule, TasksModule],
+  imports: [
+    ConfigModule.forRoot({
+      load: [appConfig],
+    }),
+    EmailModule,
+    UserModule,
+    TasksModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

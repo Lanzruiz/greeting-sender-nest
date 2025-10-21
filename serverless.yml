@@ -6,6 +6,12 @@ plugins:
 provider:
   name: aws
   runtime: nodejs14.x
+  environment:
+    PG_HOST: localhost
+    PG_PORT: 5432
+    PG_USER: admin
+    PG_PASSWORD: admin
+    PG_DATABASE: mydb
 
 functions:
   main:

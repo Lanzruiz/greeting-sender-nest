@@ -44,6 +44,20 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Running with Serverless Offline
+
+```bash
+# Step 1 - Run the Database
+$ docker compose up
+
+# Step 2 - Build the project
+$ npm run build
+
+# Step 3 - Run the serverless offline
+$ npx serverless offline
+```
+
+
 ## Run tests
 
 ```bash
