@@ -41,4 +41,8 @@ export class EmailService {
     this.emails.push(emails);
     return emails;
   }
+
+  findOne(id: string): Email | undefined {
+    return this.emails.find((email) => email.id === id);
+  }
 }
