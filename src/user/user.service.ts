@@ -4,21 +4,28 @@ import { CreateUserDTO } from './create-user.dto';
 import { randomUUID } from 'crypto';
 import { UpdateUserDto } from './update-user.dto';
 import { WrongUserStatusException } from './exceptions/wrong-user-status.exception';
+import { ConfigService } from '@nestjs/config';
+import { ConfigType } from 'src/config/config.types';
+import { AppConfig } from 'src/config/app.config';
 
 @Injectable()
 export class UserService {
   private users: User[] = [];
+  constructor(private readonly configService: ConfigService<ConfigType>) {}
+
   findAll(): User[] {
     return this.users;
   }
 
   public create(createUserDto: CreateUserDTO): User {
+    const prefix = this.configService.get<AppConfig>('app')?.messagePrefix;
     const user: User = {
       id: randomUUID(),
       ...createUserDto,
     };
 
     this.users.push(user);
+    console.log('Prefix:', prefix);
 
     return user;
   }
