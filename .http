@@ -10,15 +10,15 @@
 http://{{baseUrl}}
 
 
-### Get all Tasks
+### Get all Emails
 GET http://{{baseUrl}}/api/emails
 
 
-### Get one Task
+### Get one Email
 GET http://{{baseUrl}}/api/emails/{{emailId}}
 
 
-### Create a new task
+### Create a new Email
 # @name createEmail
 POST http://{{baseUrl}}/api/emails
 Content-Type: {{contentType}}
@@ -33,7 +33,7 @@ Content-Type: {{contentType}}
 ### Set the task id
 @emailId = {{createEmail.response.body.id}}
 
-### update a task
+### update a Email
 
 PATCH http://{{baseUrl}}/api/emails/{{emailId}}
 Content-Type: {{contentType}}
@@ -43,9 +43,53 @@ Content-Type: {{contentType}}
 }
 
  
-### Delete a task
+### Delete a Email
 
 Delete http://{{baseUrl}}/api/email/{{emailId}}
  
  
+
+
+### Get all Users
+GET http://{{baseUrl}}/api/users
+
+
+### Create a new User
+# @name createUser
+POST http://{{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "first_name": "Lanz",
+  "middle_name": "Bocado",
+  "last_name": "Ruiz",
+  "nick_name": "Lamz",
+  "email": "Lanzruizdesigns@gmail.com",
+  "birth_date": "2025-01-18",
+  "country": "NZ",
+  "status": "IN_ACTIVE"
+}
+
+
+### Set the user id
+@userId = {{createUser.response.body.id}}
+
+
+### Get one User
+GET http://{{baseUrl}}/api/users/{{userId}}
+
+
+### update a user
+PATCH http://{{baseUrl}}/api/users/{{userId}}
+Content-Type: {{contentType}}
+
+{
+    "status": "ACTIVE"
+}
+
+### Delete a User
+
+Delete http://{{baseUrl}}/api/users/{{userId}}
  
+ 
+
