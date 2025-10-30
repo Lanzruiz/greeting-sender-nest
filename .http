@@ -15,7 +15,7 @@ GET http://{{baseUrl}}/api/emails
 
 
 ### Get one Task
-GET http://{{baseUrl}}/api/tasks/{{taskId}}
+GET http://{{baseUrl}}/api/emails/{{emailId}}
 
 
 ### Create a new task
@@ -27,7 +27,7 @@ Content-Type: {{contentType}}
     "subject": "Learn the Nest from post man 3",
     "reciever": "Lanzruizdesigns@gmail.com",
     "message": "Complete the NestJS course",
-    "status": "SENT"
+    "status": "NOT_SENT"
 }
 
 ### Set the task id
@@ -35,11 +35,11 @@ Content-Type: {{contentType}}
 
 ### update a task
 
-PATCH http://{{baseUrl}}/api/email/{{emailId}}
+PATCH http://{{baseUrl}}/api/emails/{{emailId}}
 Content-Type: {{contentType}}
 
 {
-    "status": "DONE"
+    "status": "SENT"
 }
 
  
