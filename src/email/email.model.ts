@@ -4,6 +4,7 @@ export interface Email {
   message: string;
   date: Date;
   reciever: string;
+  userId: string;
 }
 
 export interface EmailSend {
@@ -11,6 +12,7 @@ export interface EmailSend {
   message: string;
   reciever: string;
   date: Date;
+  userId: string;
   status: EmailStatus;
 }
 

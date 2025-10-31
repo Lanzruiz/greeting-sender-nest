@@ -16,6 +16,10 @@ export class CreateEmailDTO {
   @ApiProperty()
   reciever: string;
   @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  userId: string;
+  @IsNotEmpty()
   @IsEnum(EmailStatus)
   @ApiProperty()
   status: EmailStatus;

@@ -43,6 +43,7 @@ export class EmailService {
           reciever: createEmailDto.reciever,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           date: response.headers.date,
+          userId: createEmailDto.userId,
           status: EmailStatus.SENT,
         };
       } else {
@@ -50,6 +51,7 @@ export class EmailService {
           subject: createEmailDto.subject,
           message: createEmailDto.message,
           reciever: createEmailDto.reciever,
+          userId: createEmailDto.userId,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           date: response.headers.date,
           status: EmailStatus.NOT_SENT,

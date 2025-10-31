@@ -14,5 +14,7 @@ export class Email {
   @Column()
   date: Date;
   @Column()
+  userId: string;
+  @Column()
   status: EmailStatus;
 }
