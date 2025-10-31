@@ -1,21 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { ConfigModule } from '@nestjs/config';
-import { appConfig } from 'src/config/app.config';
-import { appConfigSchema } from 'src/config/config.types';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './user.entity';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      load: [appConfig],
-      validationSchema: appConfigSchema,
-      validationOptions: {
-        // allowUnknown: true,
-        abortEarly: true,
-      },
-    }),
-  ],
+  imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserController],
   providers: [UserService],
 })

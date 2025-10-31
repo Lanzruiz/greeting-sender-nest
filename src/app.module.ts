@@ -4,19 +4,44 @@ import { AppService } from './app.service';
 import { EmailModule } from './email/email.module';
 import { UserModule } from './user/user.module';
 import { TasksModule } from './tasks/tasks.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { appConfig } from './config/app.config';
+import { TypedConfigService } from './config/typed-config.service';
+import { User } from './user/user.entity';
+import { typeOrmConfig } from './config/database.config';
+import { appConfigSchema } from './config/config.types';
 
 @Module({
   imports: [
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: TypedConfigService) => ({
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        ...configService.get('database'),
+        entities: [User],
+      }),
+    }),
     ConfigModule.forRoot({
-      load: [appConfig],
+      load: [appConfig, typeOrmConfig],
+      validationSchema: appConfigSchema,
+      validationOptions: {
+        // allowUnknown: true,
+        abortEarly: true,
+      },
     }),
     EmailModule,
     UserModule,
     TasksModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: TypedConfigService,
+      useExisting: ConfigService,
+    },
+  ],
 })
 export class AppModule {}

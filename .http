@@ -84,7 +84,8 @@ PATCH http://{{baseUrl}}/api/users/{{userId}}
 Content-Type: {{contentType}}
 
 {
-    "status": "ACTIVE"
+    "status": "ACTIVE",
+    "first_name": "LanzW"
 }
 
 ### Delete a User

@@ -1,51 +1,61 @@
 import { Injectable } from '@nestjs/common';
-import { User, UserStatus } from './user.model';
+import { UserStatus } from './user.model';
 import { CreateUserDTO } from './create-user.dto';
-import { randomUUID } from 'crypto';
 import { UpdateUserDto } from './update-user.dto';
 import { WrongUserStatusException } from './exceptions/wrong-user-status.exception';
-import { ConfigService } from '@nestjs/config';
-import { ConfigType } from 'src/config/config.types';
-import { AppConfig } from 'src/config/app.config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './user.entity';
+import { Repository } from 'typeorm';
+// import { TypedConfigService } from 'src/config/typed-config.service';
 
 @Injectable()
 export class UserService {
-  private users: User[] = [];
-  constructor(private readonly configService: ConfigService<ConfigType>) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-  findAll(): User[] {
-    return this.users;
+  findAll(): Promise<User[]> {
+    return this.userRepository.find();
   }
 
-  public create(createUserDto: CreateUserDTO): User {
-    const prefix = this.configService.get<AppConfig>('app')?.messagePrefix;
-    const user: User = {
-      id: randomUUID(),
-      ...createUserDto,
-    };
+  public async create(createUserDto: CreateUserDTO): Promise<User> {
+    // const prefix = this.configService.get<AppConfig>('app')?.messagePrefix;
+    // const user: User = {
+    //   id: randomUUID(),
+    //   ...createUserDto,
+    // };
 
-    this.users.push(user);
-    console.log('Prefix:', prefix);
+    // this.users.push(user);
+    // console.log('Prefix:', prefix);
 
-    return user;
+    return await this.userRepository.save(createUserDto);
   }
 
-  public deleteUser(user: User): void {
-    this.users = this.users.filter(
-      (filteredTask) => filteredTask.id !== user.id,
-    );
+  public async deleteUser(user: User): Promise<void> {
+    // this.users = this.users.filter(
+    //   (filteredTask) => filteredTask.id !== user.id,
+    // );
+    await this.userRepository.delete(user);
   }
 
-  public updateUser(user: User, updateUserDto: UpdateUserDto): User {
+  public async updateUser(
+    user: User,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
     if (
       updateUserDto.status &&
       !this.isValidStatusTransition(user.status, updateUserDto.status)
     ) {
       throw new WrongUserStatusException();
     }
+
+    // if (updateUserDto.status) {
+    //   updateUserDto.status = this.getUniqueLabels(updateUserDto.status);
+    // }
+
     Object.assign(user, updateUserDto);
-    //await this.send(updateEmailDto as CreateEmailDTO);
-    return user;
+    return await this.userRepository.save(user);
   }
 
   private isValidStatusTransition(
@@ -56,7 +66,8 @@ export class UserService {
     return statusOrder.indexOf(currentStatus) <= statusOrder.indexOf(newStatus);
   }
 
-  findOne(id: string): User | undefined {
-    return this.users.find((user) => user.id === id);
+  findOne(id: string): Promise<User | null> {
+    // return this.users.find((user) => user.id === id);
+    return this.userRepository.findOneBy({ id });
   }
 }

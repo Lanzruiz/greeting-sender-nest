@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { TypedConfigService } from './config/typed-config.service';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: TypedConfigService) {}
   getHello(): string {
     return 'Hello World!';
   }
