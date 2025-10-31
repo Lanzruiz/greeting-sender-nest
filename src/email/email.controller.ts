@@ -9,7 +9,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { EmailService } from './email.service';
-import type { Email } from './email.model';
+import { Email } from './email.entity';
 import { CreateEmailDTO } from './create-email.dto';
 import { FindOneParams } from './find-one.params';
 import { UpdateEmailStatusDTO } from './update-email-status.dto';
@@ -19,11 +19,11 @@ import { WrongEmailStatusException } from './execptions/wrong-email-status.excep
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
   @Get()
-  public findAll(): Email[] {
+  public findAll(): Promise<Email[]> {
     return this.emailService.findAll();
   }
   @Get('/:id')
-  public findOne(@Param() params: FindOneParams): Email {
+  public findOne(@Param() params: FindOneParams): Promise<Email> {
     return this.findOneOrFail(params.id);
   }
   @Post()
@@ -32,14 +32,14 @@ export class EmailController {
   }
 
   @Patch('/:id')
-  public updateTask(
+  public async updateTask(
     @Param() params: FindOneParams,
     @Body() updateEmailDto: UpdateEmailStatusDTO,
   ) {
     const email = this.findOneOrFail(params.id);
     // return this.taskService.updateTask(task, updateTaskDto);
     try {
-      return this.emailService.updateEmail(email, updateEmailDto);
+      return this.emailService.updateEmail(await email, updateEmailDto);
     } catch (error) {
       if (error instanceof WrongEmailStatusException) {
         throw new BadRequestException([error.message]);
@@ -48,13 +48,14 @@ export class EmailController {
     }
   }
 
-  private findOneOrFail(id: string): Email {
-    const email = this.emailService.findOne(id);
+  private async findOneOrFail(id: string): Promise<Email> {
+    const email = await this.emailService.findOne(id);
 
-    if (email) {
-      return email;
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    if (!email) {
+      throw new NotFoundException();
     }
 
-    throw new NotFoundException();
+    return email;
   }
 }

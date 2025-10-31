@@ -2,14 +2,15 @@ export interface Email {
   id: string;
   subject: string;
   message: string;
+  date: Date;
   reciever: string;
-  status: EmailStatus;
 }
 
 export interface EmailSend {
   subject: string;
   message: string;
   reciever: string;
+  date: Date;
   status: EmailStatus;
 }
 

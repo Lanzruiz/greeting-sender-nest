@@ -11,6 +11,7 @@ import { TypedConfigService } from './config/typed-config.service';
 import { User } from './user/user.entity';
 import { typeOrmConfig } from './config/database.config';
 import { appConfigSchema } from './config/config.types';
+import { Email } from './email/email.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { appConfigSchema } from './config/config.types';
       useFactory: (configService: TypedConfigService) => ({
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         ...configService.get('database'),
-        entities: [User],
+        entities: [User, Email],
       }),
     }),
     ConfigModule.forRoot({

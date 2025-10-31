@@ -1,50 +1,81 @@
 import { Injectable } from '@nestjs/common';
-import { Email, EmailSend, EmailStatus } from './email.model';
-import { randomUUID } from 'crypto';
+import { EmailSend, EmailStatus } from './email.model';
 import { CreateEmailDTO } from './create-email.dto';
 import axios from 'axios';
-import { ConfigService } from '@nestjs/config';
 import { UpdateEmailDto } from './update-email.dto';
 import { WrongEmailStatusException } from './execptions/wrong-email-status.exception';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Email } from './email.entity';
 
 @Injectable()
 export class EmailService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    @InjectRepository(Email)
+    private readonly emailRepository: Repository<Email>,
+  ) {}
 
-  private emails: Email[] = [];
-
-  findAll(): Email[] {
-    return this.emails;
+  findAll(): Promise<Email[]> {
+    return this.emailRepository.find();
   }
 
-  async send(createEmailDto: CreateEmailDTO): Promise<EmailSend> {
-    const prefix = this.configService.get<string>('app.messagePrefix');
-    const response = await axios.post(
-      'https://eop7al0jqtbxyqv.m.pipedream.net',
-      {
-        to: createEmailDto.reciever,
-        subject: createEmailDto.subject,
-        body: createEmailDto.message,
-      },
-    );
+  public async send(createEmailDto: CreateEmailDTO): Promise<EmailSend> {
+    try {
+      const response = await axios.post(
+        'https://eob8vlp21tsh2li.m.pipedream.net',
+        {
+          to: createEmailDto.reciever,
+          subject: createEmailDto.subject,
+          body: createEmailDto.message,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
 
-    console.log('Email sent:', response.data);
-    console.log('Prefix:', prefix);
-    return createEmailDto;
+      console.log('Email sent successfully:', response.status);
+      if (response.status) {
+        return {
+          subject: createEmailDto.subject,
+          message: createEmailDto.message,
+          reciever: createEmailDto.reciever,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          date: response.headers.date,
+          status: EmailStatus.SENT,
+        };
+      } else {
+        return {
+          subject: createEmailDto.subject,
+          message: createEmailDto.message,
+          reciever: createEmailDto.reciever,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          date: response.headers.date,
+          status: EmailStatus.NOT_SENT,
+        };
+      }
+    } catch (error) {
+      console.error(
+        'Error sending email:',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        error.response.data || error.message,
+      );
+      throw error;
+    }
   }
 
-  create(createEmailDto: CreateEmailDTO): Email {
-    const emails: Email = {
-      id: randomUUID(),
-      ...createEmailDto,
-    };
-    //await this.send(createEmailDto);
+  async create(createEmailDto: CreateEmailDTO): Promise<Email> {
+    const sent = await this.send(createEmailDto);
 
-    this.emails.push(emails);
-    return emails;
+    // this.emails.push(emails);
+    return await this.emailRepository.save(sent);
   }
 
-  public updateEmail(email: Email, updateEmailDto: UpdateEmailDto): Email {
+  public async updateEmail(
+    email: Email,
+    updateEmailDto: UpdateEmailDto,
+  ): Promise<Email> {
     if (
       updateEmailDto.status &&
       !this.isValidStatusTransition(email.status, updateEmailDto.status)
@@ -53,7 +84,7 @@ export class EmailService {
     }
     Object.assign(email, updateEmailDto);
     //await this.send(updateEmailDto as CreateEmailDTO);
-    return email;
+    return await this.emailRepository.save(email);
   }
 
   private isValidStatusTransition(
@@ -68,7 +99,8 @@ export class EmailService {
     return statusOrder.indexOf(currentStatus) <= statusOrder.indexOf(newStatus);
   }
 
-  findOne(id: string): Email | undefined {
-    return this.emails.find((email) => email.id === id);
+  findOne(id: string): Promise<Email | null> {
+    // return this.emails.find((email) => email.id === id);
+    return this.emailRepository.findOneBy({ id });
   }
 }
