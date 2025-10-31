@@ -12,6 +12,8 @@ import { User } from './user/user.entity';
 import { typeOrmConfig } from './config/database.config';
 import { appConfigSchema } from './config/config.types';
 import { Email } from './email/email.entity';
+import { SchedulerService } from './scheduler/scheduler.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -35,9 +37,11 @@ import { Email } from './email/email.entity';
     EmailModule,
     UserModule,
     TasksModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [
+    SchedulerService,
     AppService,
     {
       provide: TypedConfigService,

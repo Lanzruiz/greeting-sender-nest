@@ -1,0 +1,68 @@
+{
+  "/Users/lanzruiz/Desktop/Files/Project/Udemy/NextNest/greeting-sender-nest/serverless.yml": {
+    "versionFramework": "4.22.0",
+    "servicePath": "/Users/lanzruiz/Desktop/Files/Project/Udemy/NextNest/greeting-sender-nest/serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "serverless-example",
+      "plugins": [
+        "serverless-offline"
+      ],
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs14.x",
+        "environment": {
+          "PG_HOST": "localhost",
+          "PG_PORT": 5432,
+          "PG_USER": "admin",
+          "PG_PASSWORD": "<REDACTED>",
+          "PG_DATABASE": "mydb"
+        }
+      },
+      "functions": {
+        "main": {
+          "handler": "dist/main.handler",
+          "events": [
+            {
+              "http": {
+                "method": "ANY",
+                "path": "/"
+              }
+            },
+            {
+              "http": {
+                "method": "ANY",
+                "path": "{proxy+}"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs14.x",
+      "environment": {
+        "PG_HOST": "localhost",
+        "PG_PORT": 5432,
+        "PG_USER": "admin",
+        "PG_PASSWORD": "<REDACTED>",
+        "PG_DATABASE": "mydb"
+      }
+    },
+    "error": {
+      "message": "fetch failed",
+      "stack": "Error: fetch failed\n    at Authentication.getClientDataFromAccessKey (file:///Users/lanzruiz/.serverless/releases/4.22.0/package/dist/sf-core.js:719:18653)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async Authentication.getAuthenticatedData (file:///Users/lanzruiz/.serverless/releases/4.22.0/package/dist/sf-core.js:719:3755)\n    at async Authentication.authenticate (file:///Users/lanzruiz/.serverless/releases/4.22.0/package/dist/sf-core.js:719:22222)\n    at async _CoreRunner.resolveVariablesAndAuthenticate (file:///Users/lanzruiz/.serverless/releases/4.22.0/package/dist/sf-core.js:726:1266)\n    at async _CoreRunner.run (file:///Users/lanzruiz/.serverless/releases/4.22.0/package/dist/sf-core.js:1040:6703)\n    at async route (file:///Users/lanzruiz/.serverless/releases/4.22.0/package/dist/sf-core.js:1528:2878)\n    at async Object.run (file:///Users/lanzruiz/.serverless/releases/4.22.0/package/dist/sf-core.js:1529:3755)\n    at async run2 (file:///Users/lanzruiz/.serverless/releases/4.22.0/package/dist/sf-core.js:1529:4909)"
+    },
+    "serviceRawFile": "service: serverless-example\n\nplugins:\n  - serverless-offline\n\nprovider:\n  name: aws\n  runtime: nodejs14.x\n  environment:\n    PG_HOST: localhost\n    PG_PORT: 5432\n    PG_USER: admin\n    PG_PASSWORD: admin\n    PG_DATABASE: mydb\n\nfunctions:\n  main:\n    handler: dist/main.handler\n    events:\n      - http:\n          method: ANY\n          path: /\n      - http:\n          method: ANY\n          path: '{proxy+}'",
+    "command": [
+      "support"
+    ],
+    "options": {},
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}
