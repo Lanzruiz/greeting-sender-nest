@@ -84,7 +84,15 @@ export class EmailService {
       throw new WrongEmailStatusException();
     }
     Object.assign(email, updateEmailDto);
-    //await this.send(updateEmailDto as CreateEmailDTO);
+    // Merge existing email with the updates to produce a full CreateEmailDTO for sending
+    const createEmailDto: CreateEmailDTO = {
+      subject: updateEmailDto.subject ?? email.subject,
+      message: updateEmailDto.message ?? email.message,
+      reciever: email.reciever,
+      userId: updateEmailDto.userId ?? email.userId,
+      status: EmailStatus.SENT,
+    };
+    await this.send(createEmailDto);
     return await this.emailRepository.save(email);
   }
 
