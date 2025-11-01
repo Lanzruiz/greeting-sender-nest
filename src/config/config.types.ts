@@ -9,6 +9,7 @@ export interface ConfigType {
 
 export const appConfigSchema = Joi.object({
   APP_MESSAGE_PREFIX: Joi.string().default('Hello '),
+  EMAIL_SERVER: Joi.string().default('localhost'),
   DB_HOST: Joi.string().default('localhost'),
   DB_PORT: Joi.number().default(5432),
   DB_USER: Joi.string().required(),

@@ -7,12 +7,14 @@ import { WrongEmailStatusException } from './execptions/wrong-email-status.excep
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Email } from './email.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class EmailService {
   constructor(
     @InjectRepository(Email)
     private readonly emailRepository: Repository<Email>,
+    private readonly configService: ConfigService,
   ) {}
 
   findAll(): Promise<Email[]> {
@@ -20,9 +22,13 @@ export class EmailService {
   }
 
   public async send(createEmailDto: CreateEmailDTO): Promise<EmailSend> {
+    const emailServer = this.configService.get<string>('app.emailServer');
+    if (!emailServer) {
+      throw new Error('Email server configuration is missing');
+    }
     try {
       const response = await axios.post(
-        'https://eob8vlp21tsh2li.m.pipedream.net',
+        emailServer,
         {
           to: createEmailDto.reciever,
           subject: createEmailDto.subject,
@@ -35,40 +41,33 @@ export class EmailService {
         },
       );
 
-      console.log('Email sent successfully:', response.status);
-      if (response.status) {
-        return {
-          subject: createEmailDto.subject,
-          message: createEmailDto.message,
-          reciever: createEmailDto.reciever,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          date: response.headers.date,
-          userId: createEmailDto.userId,
-          status: EmailStatus.SENT,
-        };
-      } else {
-        return {
-          subject: createEmailDto.subject,
-          message: createEmailDto.message,
-          reciever: createEmailDto.reciever,
-          userId: createEmailDto.userId,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          date: response.headers.date,
-          status: EmailStatus.NOT_SENT,
-        };
-      }
+      return {
+        subject: createEmailDto.subject,
+        message: createEmailDto.message,
+        reciever: createEmailDto.reciever,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        date: response.headers.date,
+        userId: createEmailDto.userId,
+        status: EmailStatus.SENT,
+      };
     } catch (error) {
-      console.error(
-        'Error sending email:',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        error.response.data || error.message,
-      );
-      throw error;
+      return {
+        subject: createEmailDto.subject,
+        message: createEmailDto.message,
+        reciever: createEmailDto.reciever,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        date: new Date(),
+        userId: createEmailDto.userId,
+        status: EmailStatus.NOT_SENT,
+      };
+      // throw error;
     }
   }
 
   async create(createEmailDto: CreateEmailDTO): Promise<Email> {
     const sent = await this.send(createEmailDto);
+
+    console.log('sent', sent);
 
     // this.emails.push(emails);
     return await this.emailRepository.save(sent);

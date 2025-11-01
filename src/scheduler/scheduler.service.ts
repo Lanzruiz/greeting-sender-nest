@@ -27,15 +27,19 @@ export class SchedulerService {
       email: 'Lloyd@australiancorndbeef.com',
       timezone: 'Australia/Sydney',
     },
+    {
+      name: 'Grahmn',
+      email: 'Grahmn@australiancorndbeef.com',
+      timezone: 'Australia/Melbourne',
+    },
   ];
 
-  @Cron('*/10 * * * *')
+  @Cron('45 * * * * *')
   handleCron() {
     const nowUTC = moment.utc();
     this.logger.log(
       `Checking scheduled emails at UTC ${nowUTC.format('HH:mm')}...`,
     );
-    this.logger.debug('Called when the second is 45');
 
     for (const user of this.users) {
       // Get the user's current local hour/minute
@@ -44,10 +48,8 @@ export class SchedulerService {
       const localMinute = localTime.minute();
 
       // Condition: send at exactly 9:00 AM local time
-      if (localHour === 6 && localMinute < 10) {
-        this.logger.debug(
-          `Birth Day email sent to ${user.email} with the email of ${user.email}`,
-        );
+      if (localHour === 9 && localMinute < 10) {
+        this.logger.debug(`Birth Day email sent to ${user.email}`);
       }
     }
   }
