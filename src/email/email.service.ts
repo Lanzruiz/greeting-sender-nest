@@ -136,4 +136,7 @@ export class EmailService {
     // return this.emails.find((email) => email.id === id);
     return this.emailRepository.findOneBy({ id });
   }
+  public findEmailCreatedById(userId: string): Promise<Email | null> {
+    return this.emailRepository.findOneBy({ userId });
+  }
 }
