@@ -1,5 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { EmailStatus } from './email.model';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateEmailDTO {
@@ -11,6 +10,9 @@ export class CreateEmailDTO {
   @IsString()
   @ApiProperty()
   message: string;
+  @IsString()
+  @ApiProperty()
+  name: string;
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
@@ -19,8 +21,4 @@ export class CreateEmailDTO {
   @IsString()
   @ApiProperty()
   userId: string;
-  @IsNotEmpty()
-  @IsEnum(EmailStatus)
-  @ApiProperty()
-  status: EmailStatus;
 }

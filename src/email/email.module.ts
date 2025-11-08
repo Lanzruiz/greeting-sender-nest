@@ -15,5 +15,6 @@ import { appConfig } from 'src/config/app.config';
   ],
   controllers: [EmailController],
   providers: [EmailService],
+  exports: [EmailService],
 })
 export class EmailModule {}

@@ -7,6 +7,7 @@ export interface User {
   email: string;
   birth_date: Date;
   country: string;
+  time_zone: string;
   status: UserStatus;
 }
 

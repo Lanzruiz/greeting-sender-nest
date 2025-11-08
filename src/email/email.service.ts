@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { EmailSend, EmailStatus } from './email.model';
+import { EmailStatus } from './email.model';
 import { CreateEmailDTO } from './create-email.dto';
 import axios from 'axios';
 import { UpdateEmailDto } from './update-email.dto';
-import { WrongEmailStatusException } from './execptions/wrong-email-status.exception';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Email } from './email.entity';
@@ -21,13 +20,13 @@ export class EmailService {
     return this.emailRepository.find();
   }
 
-  public async send(createEmailDto: CreateEmailDTO): Promise<EmailSend> {
+  public async send(createEmailDto: CreateEmailDTO): Promise<Email> {
     const emailServer = this.configService.get<string>('app.emailServer');
     if (!emailServer) {
       throw new Error('Email server configuration is missing');
     }
     try {
-      const response = await axios.post(
+      await axios.post(
         emailServer,
         {
           to: createEmailDto.reciever,
@@ -41,27 +40,58 @@ export class EmailService {
         },
       );
 
-      return {
+      const email = new Email();
+      Object.assign(email, {
         subject: createEmailDto.subject,
         message: createEmailDto.message,
         reciever: createEmailDto.reciever,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        date: response.headers.date,
+        name: createEmailDto.name,
         userId: createEmailDto.userId,
         status: EmailStatus.SENT,
-      };
+      });
+      return email;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      return {
+      const email = new Email();
+      Object.assign(email, {
         subject: createEmailDto.subject,
         message: createEmailDto.message,
         reciever: createEmailDto.reciever,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        date: new Date(),
+        name: createEmailDto.name,
         userId: createEmailDto.userId,
         status: EmailStatus.NOT_SENT,
-      };
+      });
+      // return the Email entity even on failure so callers that expect Email can persist it
+      return email;
       // throw error;
     }
+  }
+
+  async sendGreetings(
+    createEmailDto: CreateEmailDTO,
+    option: string,
+  ): Promise<Email> {
+    switch (option) {
+      case 'bday': {
+        let email = new Email();
+        email = await this.send({
+          subject: createEmailDto.subject,
+          message: createEmailDto.message,
+          reciever: createEmailDto.reciever,
+          name: createEmailDto.name,
+          userId: createEmailDto.userId,
+        });
+        console.log(email);
+        return await this.emailRepository.save(email);
+        break;
+      }
+      case 'annivesary':
+        // code block
+        break;
+      default:
+      // code block
+    }
+    return this.create(createEmailDto);
   }
 
   async create(createEmailDto: CreateEmailDTO): Promise<Email> {
@@ -77,12 +107,6 @@ export class EmailService {
     email: Email,
     updateEmailDto: UpdateEmailDto,
   ): Promise<Email> {
-    if (
-      updateEmailDto.status &&
-      !this.isValidStatusTransition(email.status, updateEmailDto.status)
-    ) {
-      throw new WrongEmailStatusException();
-    }
     Object.assign(email, updateEmailDto);
     // Merge existing email with the updates to produce a full CreateEmailDTO for sending
     const createEmailDto: CreateEmailDTO = {
@@ -90,7 +114,7 @@ export class EmailService {
       message: updateEmailDto.message ?? email.message,
       reciever: email.reciever,
       userId: updateEmailDto.userId ?? email.userId,
-      status: EmailStatus.SENT,
+      name: updateEmailDto.name ?? email.name,
     };
     await this.send(createEmailDto);
     return await this.emailRepository.save(email);

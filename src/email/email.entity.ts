@@ -1,5 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+} from 'typeorm';
 import { EmailStatus } from './email.model';
+import { User } from './../user/user.entity';
 
 @Entity()
 export class Email {
@@ -10,11 +18,17 @@ export class Email {
   @Column()
   message: string;
   @Column()
+  name: string;
+  @Column()
   reciever: string;
   @Column()
-  date: Date;
-  @Column()
   userId: string;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
   @Column()
   status: EmailStatus;
+  @ManyToOne(() => User, (user) => user.email, { nullable: false })
+  user: User;
 }

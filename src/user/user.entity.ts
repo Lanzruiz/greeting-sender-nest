@@ -1,5 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { UserStatus } from './user.model';
+import { Email } from './../email/email.entity';
 
 @Entity()
 export class User {
@@ -20,5 +28,14 @@ export class User {
   @Column()
   country: string;
   @Column()
+  time_zone: string;
+  @Column()
   status: UserStatus;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
+  @OneToMany(() => Email, (email) => email.user)
+  emails: Email[];
 }

@@ -2,18 +2,22 @@ export interface Email {
   id: string;
   subject: string;
   message: string;
-  date: Date;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
   reciever: string;
   userId: string;
+  status: EmailStatus;
 }
 
 export interface EmailSend {
   subject: string;
   message: string;
+  name: string;
   reciever: string;
-  date: Date;
+  createdAt: Date;
+  updatedAt: Date;
   userId: string;
-  status: EmailStatus;
 }
 
 export enum EmailStatus {

@@ -38,6 +38,11 @@ export class CreateUserDTO {
   @ApiProperty()
   country: string;
 
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  time_zone: string;
+
   @ApiProperty()
   status: UserStatus;
 }
