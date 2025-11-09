@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EmailModule } from './email/email.module';
 import { UserModule } from './user/user.module';
-import { TasksModule } from './tasks/tasks.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { appConfig } from './config/app.config';
@@ -36,7 +35,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     }),
     EmailModule,
     UserModule,
-    TasksModule,
+
     ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
