@@ -38,7 +38,7 @@ export class SchedulerService {
         birthday.getMonth() === today.getMonth();
 
       // Condition: send at exactly 9:00 AM local time
-      if (localHour === 20 && localMinute < 10 && isBirthday) {
+      if (localHour === 13 && localMinute < 45 && isBirthday) {
         const userObj = {
           reciever: user.email,
           name: user.first_name,
@@ -50,11 +50,12 @@ export class SchedulerService {
         const emailExisted = await this.emailService.findEmailCreatedById(
           user.id,
         );
+
         if (!emailExisted) {
           await this.emailService.sendGreetings(userObj, 'bday');
-        }
 
-        this.logger.debug(`Birth Day email sent to ${user.email}`);
+          this.logger.debug(`Birth Day email sent to ${user.email}`);
+        }
       }
     }
   }

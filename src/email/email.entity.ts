@@ -21,14 +21,14 @@ export class Email {
   name: string;
   @Column()
   reciever: string;
-  @Column()
-  userId: string;
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
   @Column()
   status: EmailStatus;
+  @Column()
+  userId: string;
   @ManyToOne(() => User, (user) => user.email, { nullable: false })
   user: User;
 }

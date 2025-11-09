@@ -3,7 +3,7 @@ import { EmailStatus } from './email.model';
 import { CreateEmailDTO } from './create-email.dto';
 import axios from 'axios';
 import { UpdateEmailDto } from './update-email.dto';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Email } from './email.entity';
 import { ConfigService } from '@nestjs/config';
@@ -137,6 +137,15 @@ export class EmailService {
     return this.emailRepository.findOneBy({ id });
   }
   public findEmailCreatedById(userId: string): Promise<Email | null> {
-    return this.emailRepository.findOneBy({ userId });
+    const currentYear = new Date().getFullYear();
+
+    const startOfYear = new Date(`${currentYear}-01-01T00:00:00Z`);
+    const endOfYear = new Date(`${currentYear}-12-31T23:59:59Z`);
+    return this.emailRepository.findOne({
+      where: {
+        userId: userId,
+        createdAt: Between(startOfYear, endOfYear),
+      },
+    });
   }
 }
